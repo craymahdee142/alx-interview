@@ -10,17 +10,17 @@ def canUlockedAll(boxes):
     """
     Function that check if all boxes can be opened
     """
-    if not isinstance(boxes, list) or not boxes:
+    if type(boxes) is not list or not boxes:
         return False
 
-    unlocked_boxes[0] = True
-    """ Check for total number of boxes"""
-    num_boxes = len(boxes)
-    unlocked_boxes = [False] * num_boxes
+    unlocked_boxes = [0]
 
-    for k in range(num_boxes):
-        for i in boxes[i]:
+    for n in unlocked_boxes:
+        for k in boxes[n]:
             """ Update the status of the boxes that can be unlocked"""
-            if 0 <= i < num_boxes:
-                unlocked_boxes[i] = True
-    return all(unlockde_boxes)
+            if k not in unlocked_boxes and key < len(boxes):
+                unlocked_boxes.append(k)
+
+    if len(unlocked_boxes) == leb(boxes):
+        return True
+    return False
