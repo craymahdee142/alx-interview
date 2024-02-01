@@ -17,7 +17,7 @@ def validUTF8(data):
             return False
 
         if byte_count == 0:
-            if i >> 5 == 0b110:
+            if i >> 5 == 0b110 or i >> 5 == 0b1110:
                 byte_count == 1
             elif i >> 4 == 0b1110:
                 byte_count == 2
