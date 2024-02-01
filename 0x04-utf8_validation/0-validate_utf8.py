@@ -28,7 +28,7 @@ def validUTF8(data):
             # If it's a single byte character
             if byte_count == 0:
                 continue
-            
+
             # UTF-8 charac can be 1 or 4 long
             if byte_count == 1 or byte_count > 4:
                 return False
