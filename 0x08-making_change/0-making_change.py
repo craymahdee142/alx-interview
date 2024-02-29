@@ -1,29 +1,38 @@
 #!/usr/bin/python3
-"""Given a pile of coins of different values,
-    determine the fewest number of coins needed to meet
-    a given amount total.
 """
-import sys
+Module for making change
+"""
 
 
 def makeChange(coins, total):
-    """
-    Return: fewest number of coins needed to meet total
-    If total is 0 or less, return 0
-    If total cannot be met by any number of coins you have, return -1
-    """
+    # if the total is zero or less, we don't need any coin
     if total <= 0:
         return 0
-    table = [sys.maxsize for i in range(total + 1)]
-    table[0] = 0
-    m = len(coins)
-    for i in range(1, total + 1):
-        for j in range(m):
-            if coins[j] <= i:
-                subres = table[i - coins[j]]
-                if subres != sys.maxsize and subres + 1 < table[i]:
-                    table[i] = subres + 1
 
-    if table[total] == sys.maxsize:
+    # Sort the coins in desecnding order to try the largest dominates first
+    coins.sort(reverse=True)
+    coin_count = 0
+
+    for coin in coins:
+        if coin > total:
+            # If the coin value is larger than the remaining total, s
+            continue
+
+        # Calculate how many coins of this denomination can be used
+        count = total // coin
+
+        # Reduce the remaining total by the amount covered by these coins
+        total -= count * coin
+
+        coin_count += count
+
+        # If the total is now 0, break out of the loop as we have the
+        if total == 0:
+            break
+
+    # If we have exited the loop but still have a remaining total, return -1
+    if total > 0:
         return -1
-    return table[total]
+
+    # Otherwise return total  umber of coins
+    return coin_count
