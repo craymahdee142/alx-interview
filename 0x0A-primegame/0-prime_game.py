@@ -1,98 +1,83 @@
 #!/usr/bin/python3
-"""Prime Game: A game where players compete to remove
-    prime numbers and their multiples"""
+"""Module for Prime Game"""
 
 
-def isWinner(num_rounds, round_limits):
+def isWinner(x, nums):
     """
-    Determines the winner of the prime game.
+    Determines the winner of a set of prime number removal games.
 
     Args:
-        num_rounds (int): The number of rounds played.
-        round_limits (list of int): A list containing the upper
-        limits of consecutive integers for each round.
+        x (int): The number of rounds.
+        nums (list of int): A list of integers denoting the upper
+        limits of each round.
 
     Returns:
-        str or None: The name of the player who won the most rounds.
-        Returns 'Maria' or 'Ben' if a winner is determined, or
-        None if the winner cannot be determined.
+        str: The name of the player who won the most
+        rounds (either "Ben" or "Maria").
+        None: If the winner cannot be determined.
     """
+    # Check for invalid input
+    if x <= 0 or nums is None or x != len(nums):
+        return None
 
-    round_wins = {'Maria': 0, 'Ben': 0}
+    # Initialize scores
+    ben = 0
+    maria = 0
 
-    for round_idx in range(num_rounds):
-        round_winner = determine_round_winner(
-                round_limits[round_idx], num_rounds)
-        if round_winner is not None:
-            round_wins[round_winner] += 1
+    # Generate a list of prime numbers up to the
+    # maximum number in nums using the Sieve of Eratosthenes
+    max_num = max(nums)
+    primes = sieveOfEratosthenes(max_num)
 
-    if round_wins['Maria'] > round_wins['Ben']:
-        return 'Maria'
-    elif round_wins['Ben'] > round_wins['Maria']:
-        return 'Ben'
+    # Play each round of the game
+    for n in nums:
+        # Count prime numbers up to and including n
+        prime_count = sum(primes[:n+1])
+
+        # If the prime count is even, Ben wins; if odd, Maria wins
+        if prime_count % 2 == 0:
+            ben += 1
+        else:
+            maria += 1
+
+    # Determine the winner
+    if ben > maria:
+        return "Ben"
+    elif maria > ben:
+        return "Maria"
     else:
         return None
 
 
-def determine_round_winner(round_limit, num_rounds):
-    '''
-    Determines the winner of a single round of the prime game.
+def sieveOfEratosthenes(n):
+    """
+    Generates an array indicating whether numbers are prime,
+    using the Sieve of Eratosthenes.
 
     Args:
-        round_limit (int): The upper limit of consecutive
-        integers for the current round.
-        num_rounds (int): The total number of rounds played.
+        n (int): The upper limit of numbers to check for primality.
 
     Returns:
-        str or None: The name of the player who won the round.
-        Returns 'Maria' or 'Ben' if a winner is determined, or
-        None if the winner cannot be determined.
-    '''
-
-    remaining_numbers = [i for i in range(1, round_limit + 1)]
-    players = ['Maria', 'Ben']
-
-    for num_idx in range(round_limit):
-        current_player = players[num_idx % 2]
-        selected_indices = []
-        prime_number = -1
-        for idx, num in enumerate(remaining_numbers):
-            if prime_number != -1:
-                if num % prime_number == 0:
-                    selected_indices.append(idx)
-            else:
-                if is_prime(num):
-                    selected_indices.append(idx)
-                    prime_number = num
-        if prime_number == -1:
-            if current_player == players[0]:
-                return players[1]
-            else:
-                return players[0]
-        else:
-            for idx, val in enumerate(selected_indices):
-                del remaining_numbers[val - idx]
-    return None
+        list of bool: A list indicating whether each
+        number up to n is prime.
+    """
+    prime = [True for _ in range(n+1)]
+    p = 2
+    while (p * p <= n):
+        # If prime[p] is True, then it is a prime
+        if prime[p]:
+            # Updating all multiples of p
+            for i in range(p * p, n+1, p):
+                prime[i] = False
+        p += 1
+    # 0 and 1 are not prime numbers
+    prime[0], prime[1] = False, False
+    return prime
 
 
-def is_prime(number):
-    '''
-    Checks if a number is prime.
-
-    Args:
-        number (int): The number to check for primality.
-
-    Returns:
-        bool: True if the number is prime, False otherwise.
-    '''
-
-    # 0, 1, and even numbers greater than 2 are NOT PRIME
-    if number < 2 or number % 2 == 0 and number > 2:
-        return False
-    else:
-        # A number is not prime if it is divisible by another
-        # number less than or equal to its square root
-        for i in range(3, int(number**(1/2)) + 1, 2):
-            if number % i == 0:
-                return False
-        return True
+# Example usage
+if __name__ == "__main__":
+    x = 3
+    nums = [10, 5, 6]
+    winner = isWinner(x, nums)
+    print(f"The winner is: {winner}")
